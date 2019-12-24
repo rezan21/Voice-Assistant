@@ -15,8 +15,12 @@ class person:
     def setName(self, name):
         self.name = name
 
-r = sr.Recognizer() # initialise a recogniser
+def there_exists(terms):
+    for term in terms:
+        if term in voice_data:
+            return True
 
+r = sr.Recognizer() # initialise a recogniser
 # listen for audio and convert it to text:
 def record_audio(ask=False):
     with sr.Microphone() as source: # microphone as source
@@ -30,7 +34,7 @@ def record_audio(ask=False):
             speak('I did not get that')
         except sr.RequestError:
             speak('Sorry, the service is down') # error: recognizer is not connected
-        print(voice_data.lower()) # print what user said
+        print(f">> {voice_data.lower()}") # print what user said
         return voice_data.lower()
 
 # get string and make a audio file to be played
@@ -40,38 +44,34 @@ def speak(audio_string):
     audio_file = 'audio' + str(r) + '.mp3'
     tts.save(audio_file) # save as mp3
     playsound.playsound(audio_file) # play the audio file
-    print(audio_string) # print what app said
+    print(f"kiri: {audio_string}") # print what app said
     os.remove(audio_file) # remove audio file
 
 def respond(voice_data):
-
-    #if 'hey' in voice_data or "hi" in voice_data:
-    #    greetings = ["hey, how can I help you","hey, what's up?","Hi, Reza","I'm listening","how can I help you?"]
-    #    greet = greetings[random.randint(0,len(greetings)-1)]
-    #    speak(greet)
     # 1: greeting
-    for term in ['hey','hi','hello']:
-        if term in voice_data:
-            greetings = [f"hey, how can I help you {person_obj.name}", f"hey, what's up? {person_obj.name}", f"I'm listening {person_obj.name}", f"how can I help you? {person_obj.name}", f"hello {person_obj.name}"]
-            greet = greetings[random.randint(0,len(greetings)-1)]
-            speak(greet)
-            break
+    if there_exists(['hey','hi','hello']):
+        greetings = [f"hey, how can I help you {person_obj.name}", f"hey, what's up? {person_obj.name}", f"I'm listening {person_obj.name}", f"how can I help you? {person_obj.name}", f"hello {person_obj.name}"]
+        greet = greetings[random.randint(0,len(greetings)-1)]
+        speak(greet)
 
     # 2: name
-    if 'what is your name' in voice_data or "what's your name" in voice_data:
-        speak("my name is kiri. what's your name?")
+    if there_exists(["what is your name","what's your name","tell me your name"]):
+        if person_obj.name:
+            speak("my name is Lexa")
+        else:
+            speak("my name is Lexa. what's your name?")
 
-    if 'my name is' in voice_data:
+    if there_exists(["my name is"]):
         person_name = voice_data.split("is")[-1].strip()
         speak(f"okay, i will remember that {person_name}")
-        person_obj.setName(person_name)
+        person_obj.setName(person_name) # remember name in person object
 
-    # 3:
-    if 'how are you' in voice_data or "how are you doing?" in voice_data:
-        speak("I'm very well, thanks for asking Reza")
+    # 3: greeting
+    if there_exists(["how are you","how are you doing"]):
+        speak(f"I'm very well, thanks for asking {person_obj.name}")
 
     # 4: time
-    if "what's the time" in voice_data or "tell me the time" in voice_data or "what time is it" in voice_data:
+    if there_exists(["what's the time","tell me the time","what time is it"]):
         time = ctime().split(" ")[3].split(":")[0:2]
         if time[0] == "00":
             hours = '12'
@@ -82,22 +82,21 @@ def respond(voice_data):
         speak(time)
 
     # 5: search google
-    if 'search for' in voice_data and 'youtube' not in voice_data:
-        #search_term = record_audio('what do you wanna search for?')
+    if there_exists(["search for"]) and 'youtube' not in voice_data:
         search_term = voice_data.split("for")[-1]
         url = f"https://google.com/search?q={search_term}"
         webbrowser.get().open(url)
-        speak(f'Here is what I found for {search_term}')
+        speak(f'Here is what I found for {search_term} on google')
 
     # 6: search youtube
-    if 'youtube' in voice_data:
+    if there_exists(["youtube"]):
         search_term = voice_data.split("for")[-1]
         url = f"https://www.youtube.com/results?search_query={search_term}"
         webbrowser.get().open(url)
         speak(f'Here is what I found for {search_term} on youtube')
 
     # 7: get stock price
-    if "price of" in voice_data:
+    if there_exists(["price of"]):
         search_term = voice_data.lower().split(" of ")[-1].strip() #strip removes whitespace after/before a term in string
         stocks = {
             "apple":"AAPL",
@@ -106,14 +105,16 @@ def respond(voice_data):
             "tesla":"TSLA",
             "bitcoin":"BTC-USD"
         }
-        stock = stocks[search_term]
-        stock = yf.Ticker(stock)
-        price = stock.info["regularMarketPrice"]
+        try:
+            stock = stocks[search_term]
+            stock = yf.Ticker(stock)
+            price = stock.info["regularMarketPrice"]
 
-        speak(f'price of {search_term} is {price} {stock.info["currency"]}')
-
-    # : exit
-    if 'exit' in voice_data:
+            speak(f'price of {search_term} is {price} {stock.info["currency"]} {person_obj.name}')
+        except:
+            speak('oops, something went wrong')
+    if there_exists(["exit", "quit", "goodbye"]):
+        speak("going offline")
         exit()
 
 
