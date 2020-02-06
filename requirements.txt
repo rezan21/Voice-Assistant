@@ -1,0 +1,9 @@
+speechrecognition
+pyaudio
+playsound
+gTTS
+yfinance
+pyobjc
+requests
+certifi
+lxml
