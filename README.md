@@ -1,10 +1,11 @@
 # Voice-Assistant
 
-🎙️ Lexa is Python-based voice assistant that uses speech recognition and text-to-speech to interact.
+🎙️ Lexa is Python-based Voice Assistant that uses speech recognition and text-to-speech to interact.
 
-### Voice Commands
+### Voice Commands:
 
 Lexa can:
+
 - Greet user
 - Say her name
 - Ask for your name and remember it
@@ -15,7 +16,7 @@ Lexa can:
 
 ### Dependencies
 
-```
+```bash
 pip install speechrecognition
 pip install pyttsx3
 pip install pyaudio
@@ -25,19 +26,15 @@ pip install PyAudio
 ```
 (If there is a issue in installing PyAudio use .whl file from this link [https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio))  
 
-### Running
+### To Run:
 
-Clone the repository:
-```bash
-git clone https://github.com/rezan21/Voice-Assistant.git
-```
-Change directory:
-```bash
-cd Voice-Assistant/
-```
-Install all required dependencies and then:
-```bash
-python3 main.py
-```
-Start talking to Lexa by saying 'hey Lexa' or 'hello Lexa'
+1. __```git clone https://github.com/rezan21/Voice-Assistant.git```__
+
+2. __```cd Voice-Assistant```__
+
+3. __Install required packages; ```pip install -r requirements.txt```__
+
+4. __Run Lexa: ```python3 main.py```__
+
+__Start talking to Lexa by saying 'hey Lexa' or 'hello Lexa'__
 
